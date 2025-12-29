@@ -15,12 +15,17 @@ export default function App() {
         background: 'linear-gradient(90deg,#fef3c7,#fde68a)',
         padding: '8px 0',
         boxShadow: '0 8px 24px rgba(0,0,0,.06)',
-        borderBottom: '1px solid rgba(0,0,0,.05)'
+        borderBottom: '1px solid rgba(0,0,0,.05)',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        width: '100%',
+        zIndex: 1000
       }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', maxWidth:1200, margin:'0 auto', padding: '0 8px' }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#111827' }}>{isMarketplace ? 'Marketplace' : 'Home'}</h1>
-            <p style={{ margin: 0, fontSize: 12, color: '#6b7280' }}>Community Hub</p>
+            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 450, color: '#111827', fontFamily: "'BBH Bogle', sans-serif" }}>{isMarketplace ? 'Marketplace' : 'MAADHURAYAM'}</h1>
           </div>
           <nav style={{ display:'flex', gap: 8 }}>
             <button onClick={() => setNotifOpen(true)} className="btn" style={{ background: 'rgba(255,255,255,.8)', color:'#111827', border: '1px solid rgba(0,0,0,.06)', borderRadius: 12, padding: '10px 14px', fontWeight: 700, boxShadow:'0 2px 8px rgba(0,0,0,.05)', backdropFilter: 'blur(4px)' }}>Notifications</button>
@@ -33,8 +38,10 @@ export default function App() {
           </nav>
         </div>
       </header>
-      <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
-      <Outlet />
+      <div style={{ paddingTop: '60px' }}>
+        <NotificationsPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
+        <Outlet />
+      </div>
     </div>
   )
 }

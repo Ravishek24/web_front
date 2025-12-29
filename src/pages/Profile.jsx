@@ -1,7 +1,48 @@
 import React, { useState } from 'react'
+import SubscriptionCard from '../components/SubscriptionCard'
+import { initiatePayUPayment } from '../services/payuService'
 
 export default function Profile() {
   const [tab, setTab] = useState('activity') // activity | messages | listings
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
+  const [showPaymentForm, setShowPaymentForm] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState(null)
+  const [paymentFormData, setPaymentFormData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    phone: ''
+  })
+
+  const handlePlanSelection = (plan, amount) => {
+    setSelectedPlan({ plan, amount })
+    setShowPaymentForm(true)
+  }
+
+  const handlePaymentSubmit = (e) => {
+    e.preventDefault()
+    
+    if (!paymentFormData.firstname || !paymentFormData.email || !paymentFormData.phone) {
+      alert('Please fill in all required fields')
+      return
+    }
+
+    try {
+      initiatePayUPayment({
+        plan: selectedPlan.plan,
+        amount: selectedPlan.amount,
+        firstname: paymentFormData.firstname,
+        email: paymentFormData.email,
+        phone: paymentFormData.phone,
+        lastname: paymentFormData.lastname || '',
+        country: 'India'
+      })
+      // Form will auto-submit and redirect to PayU
+    } catch (error) {
+      console.error('Payment initiation error:', error)
+      alert('Failed to initiate payment. Please try again.')
+    }
+  }
 
   const pill = (active) => ({
     padding: '10px 14px',
@@ -13,30 +54,226 @@ export default function Profile() {
   })
 
   return (
-    <main className="container">
+    <main className="container" style={{ padding: '2rem 0' }}>
       {/* Cover banner */}
-      <div style={{ height: 140, borderRadius: 16, background: 'linear-gradient(90deg,#3b82f6,#8b5cf6)', boxShadow:'inset 0 0 0 1px rgba(255,255,255,.15)', marginBottom: -60 }} />
+      <div style={{ 
+        height: 140, 
+        borderRadius: 16, 
+        background: 'linear-gradient(90deg, rgba(45, 104, 196, 0.2), rgba(254, 111, 94, 0.2))', 
+        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.05)', 
+        marginBottom: -60
+      }} />
 
       <div className="profile-grid">
         {/* Left sidebar - avatar card */}
         <aside>
-          <div style={{ background:'rgba(255,255,255,0.7)', backdropFilter:'blur(6px)', border:'1px solid #e5e7eb', borderRadius:16, padding:20, position:'sticky', top:16, boxShadow:'0 6px 24px rgba(0,0,0,.06)' }}>
-            <div style={{ width:180, height:180, borderRadius:24, background:'#e5e7eb', margin:'-80px auto 12px', border:'6px solid #fff' }} />
-            <h2 style={{ margin:'0 0 4px 0' }}>John Doe</h2>
-            <div style={{ color:'#6b7280', fontSize:12, marginBottom:12 }}>Community Enthusiast</div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:16 }}>
+          <div className="profile-card-pcard" style={{
+            background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.85), rgba(10, 14, 39, 0.9))',
+            backdropFilter: 'blur(2rem)',
+            borderRadius: '2rem',
+            padding: '1.5rem',
+            paddingTop: '6rem',
+            position: 'sticky',
+            top: 16,
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 0 2rem rgba(255, 255, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3)',
+            overflow: 'visible',
+            color: '#fff'
+          }}>
+            {/* Blob effect */}
+            <div style={{
+              height: '10rem',
+              width: '10rem',
+              background: 'rgba(255, 255, 255, 0.2)',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              filter: 'blur(3rem)',
+              borderRadius: '40%',
+              zIndex: 0,
+              pointerEvents: 'none'
+            }} />
+            
+            {/* Border gradient */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: '10%',
+              height: '2px',
+              width: '80%',
+              background: 'linear-gradient(0.25turn, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0))',
+              zIndex: 1
+            }} />
+            
+            {/* Profile Picture */}
+            <div style={{
+              width: 180,
+              height: 180,
+              borderRadius: '1.5rem',
+              background: 'linear-gradient(135deg, rgba(45, 104, 196, 0.3), rgba(254, 111, 94, 0.3))',
+              margin: '-120px auto 1.5rem',
+              border: '4px solid rgba(255, 255, 255, 0.1)',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 0 2rem rgba(255, 255, 255, 0.1)',
+              zIndex: 10
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(135deg, #2D68C4, #FE6F5E)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '4rem',
+                fontWeight: 800,
+                color: '#fff'
+              }}>JD</div>
+            </div>
+            
+            {/* Name */}
+            <h2 style={{
+              margin: '0 0 0.5rem 0',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: '#fff',
+              textAlign: 'center'
+            }}>John Doe</h2>
+            
+            {/* Location/Status */}
+            <div style={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '0.75rem',
+              marginBottom: '1.5rem',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem'
+            }}>
+              <span>📍</span>
+              <span>Community Enthusiast</span>
+            </div>
+            
+            {/* Stats Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '0.75rem',
+              marginBottom: '1.5rem'
+            }}>
               {[{n:42,l:'Posts'},{n:128,l:'Followers'},{n:85,l:'Following'}].map((s,i)=> (
-                <div key={i} style={{ textAlign:'center', background:'#f9fafb', border:'1px solid #e5e7eb', borderRadius:12, padding:'10px 8px' }}>
-                  <div style={{ fontWeight:800, color:'#2563eb' }}>{s.n}</div>
-                  <div style={{ fontSize:12, color:'#6b7280' }}>{s.l}</div>
+                <div key={i} style={{
+                  textAlign: 'center',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '0.75rem',
+                  padding: '0.75rem 0.5rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}>
+                  <div style={{
+                    fontWeight: 800,
+                    color: '#fff',
+                    fontSize: '1.25rem',
+                    marginBottom: '0.25rem'
+                  }}>{s.n}</div>
+                  <div style={{
+                    fontSize: '0.65rem',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05rem'
+                  }}>{s.l}</div>
                 </div>
               ))}
             </div>
-            <div style={{ display:'flex', gap:10 }}>
-              <button style={{ flex:1, background:'#3b82f6', color:'#fff', padding:'12px 14px', borderRadius:12, fontWeight:700 }}>Message</button>
-              <button style={{ width:44, height:44, borderRadius:12, background:'#f3f4f6', fontWeight:700 }}>＋</button>
+            
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+              <button style={{
+                flex: 1,
+                background: 'linear-gradient(to bottom, #00774f, #29c676)',
+                color: '#fff',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.75rem',
+                fontWeight: 700,
+                border: '1px solid rgba(41, 198, 118, 0.3)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontSize: '0.875rem',
+                boxShadow: '0 0 1rem rgba(41, 198, 118, 0.2)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(to bottom, #008a5c, #2dd684)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 0 1.5rem rgba(41, 198, 118, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(to bottom, #00774f, #29c676)'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 0 1rem rgba(41, 198, 118, 0.2)'
+              }}>Message</button>
+              <button style={{
+                width: 48,
+                height: 48,
+                borderRadius: '0.75rem',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: '#fff',
+                fontWeight: 700,
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontSize: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                e.currentTarget.style.transform = 'scale(1.1)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.transform = 'scale(1)'
+              }}>＋</button>
             </div>
-            <div style={{ marginTop:12, background:'linear-gradient(90deg,#fb923c,#ec4899)', color:'#fff', padding:'10px 14px', borderRadius:12, textAlign:'center', fontWeight:700 }}>Upgrade Membership</div>
+            
+            {/* Upgrade Membership */}
+            <div 
+              onClick={() => setShowSubscriptionModal(true)}
+              style={{
+                background: 'linear-gradient(90deg, rgba(45, 104, 196, 0.3), rgba(254, 111, 94, 0.3))',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#fff',
+                padding: '0.75rem 1rem',
+                borderRadius: '0.75rem',
+                textAlign: 'center',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                position: 'relative',
+                overflow: 'hidden',
+                fontSize: '0.875rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(90deg, rgba(45, 104, 196, 0.5), rgba(254, 111, 94, 0.5))'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 0 1.5rem rgba(254, 111, 94, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(90deg, rgba(45, 104, 196, 0.3), rgba(254, 111, 94, 0.3))'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
+              <span style={{ position: 'relative', zIndex: 1 }}>✨ Upgrade Membership</span>
+            </div>
           </div>
         </aside>
 
@@ -105,6 +342,443 @@ export default function Profile() {
           )}
         </section>
       </div>
+
+      {/* Subscription Modal */}
+      {showSubscriptionModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            animation: 'fadeIn 0.3s ease',
+            overflow: 'auto'
+          }}
+          onClick={() => setShowSubscriptionModal(false)}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(10, 14, 39, 0.95))',
+              backdropFilter: 'blur(2rem)',
+              borderRadius: '2rem',
+              padding: '2rem',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 0 4rem rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5)',
+              maxWidth: '1200px',
+              width: '100%',
+              maxHeight: 'calc(100vh - 2rem)',
+              overflowY: 'auto',
+              position: 'relative',
+              animation: 'slideIn 0.3s ease',
+              margin: 'auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowSubscriptionModal(false)}
+              style={{
+                position: 'absolute',
+                top: '1.5rem',
+                right: '1.5rem',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#fff',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 10
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                e.currentTarget.style.transform = 'rotate(90deg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.transform = 'rotate(0deg)'
+              }}
+            >
+              ×
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <h2 style={{
+                fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                fontWeight: 800,
+                color: '#fff',
+                margin: '0 0 0.5rem 0',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05rem'
+              }}>
+                Choose Your Plan
+              </h2>
+              <p style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: 'clamp(0.875rem, 2vw, 1rem)'
+              }}>
+                Select the perfect membership plan for you
+              </p>
+            </div>
+
+            {/* Subscription Cards */}
+            <div style={{
+              display: 'flex',
+              gap: '1.5rem',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              alignItems: 'stretch'
+            }}>
+              <SubscriptionCard
+                plan="Basic"
+                price={1000}
+                features={[
+                  'Access to marketplace',
+                  'Basic profile features',
+                  '5 listings per month',
+                  'Community support'
+                ]}
+                onSelect={() => handlePlanSelection('Basic', 1000)}
+              />
+              
+              <SubscriptionCard
+                plan="Premium"
+                price={2000}
+                features={[
+                  'Everything in Basic',
+                  'Unlimited listings',
+                  'Priority support',
+                  'Advanced analytics',
+                  'Featured listings',
+                  'Early access to features'
+                ]}
+                popular={true}
+                onSelect={() => handlePlanSelection('Premium', 2000)}
+              />
+              
+              <SubscriptionCard
+                plan="Enterprise"
+                price={3000}
+                features={[
+                  'Everything in Premium',
+                  'Custom branding',
+                  'Dedicated account manager',
+                  'API access',
+                  'White-label solution',
+                  '24/7 priority support',
+                  'Custom integrations'
+                ]}
+                onSelect={() => handlePlanSelection('Enterprise', 3000)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Form Modal */}
+      {showPaymentForm && selectedPlan && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 1001,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            animation: 'fadeIn 0.3s ease'
+          }}
+          onClick={() => {
+            setShowPaymentForm(false)
+            setSelectedPlan(null)
+          }}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(10, 14, 39, 0.95))',
+              backdropFilter: 'blur(2rem)',
+              borderRadius: '2rem',
+              padding: '2.5rem',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 0 4rem rgba(255, 255, 255, 0.1), 0 20px 60px rgba(0, 0, 0, 0.5)',
+              maxWidth: '500px',
+              width: '100%',
+              maxHeight: 'calc(100vh - 2rem)',
+              overflowY: 'auto',
+              position: 'relative',
+              animation: 'slideIn 0.3s ease',
+              color: '#fff'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setShowPaymentForm(false)
+                setSelectedPlan(null)
+              }}
+              style={{
+                position: 'absolute',
+                top: '1.5rem',
+                right: '1.5rem',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#fff',
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 10
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                e.currentTarget.style.transform = 'rotate(90deg)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                e.currentTarget.style.transform = 'rotate(0deg)'
+              }}
+            >
+              ×
+            </button>
+
+            {/* Form Header */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h2 style={{
+                fontSize: '1.75rem',
+                fontWeight: 800,
+                marginBottom: '0.5rem',
+                textTransform: 'uppercase'
+              }}>
+                Complete Payment
+              </h2>
+              <p style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: '0.9rem'
+              }}>
+                {selectedPlan.plan} Plan - ₹{selectedPlan.amount}/month
+              </p>
+            </div>
+
+            {/* Payment Form */}
+            <form onSubmit={handlePaymentSubmit}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  }}>
+                    First Name <span style={{ color: '#FE6F5E' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={paymentFormData.firstname}
+                    onChange={(e) => setPaymentFormData({...paymentFormData, firstname: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      color: '#fff',
+                      fontSize: '0.9rem',
+                      outline: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  }}>
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentFormData.lastname}
+                    onChange={(e) => setPaymentFormData({...paymentFormData, lastname: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      color: '#fff',
+                      fontSize: '0.9rem',
+                      outline: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  }}>
+                    Email <span style={{ color: '#FE6F5E' }}>*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={paymentFormData.email}
+                    onChange={(e) => setPaymentFormData({...paymentFormData, email: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      color: '#fff',
+                      fontSize: '0.9rem',
+                      outline: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    color: 'rgba(255, 255, 255, 0.8)'
+                  }}>
+                    Phone Number <span style={{ color: '#FE6F5E' }}>*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={paymentFormData.phone}
+                    onChange={(e) => setPaymentFormData({...paymentFormData, phone: e.target.value})}
+                    placeholder="10 digit mobile number"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      borderRadius: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      color: '#fff',
+                      fontSize: '0.9rem',
+                      outline: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  style={{
+                    width: '100%',
+                    background: 'linear-gradient(to bottom, #00774f, #29c676)',
+                    color: '#fff',
+                    padding: '1rem',
+                    borderRadius: '0.75rem',
+                    fontWeight: 700,
+                    border: '1px solid rgba(41, 198, 118, 0.3)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    fontSize: '1rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05rem',
+                    marginTop: '1rem',
+                    boxShadow: '0 0 1rem rgba(41, 198, 118, 0.3)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(to bottom, #008a5c, #2dd684)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 0 1.5rem rgba(41, 198, 118, 0.5)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(to bottom, #00774f, #29c676)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 0 1rem rgba(41, 198, 118, 0.3)'
+                  }}
+                >
+                  Proceed to PayU Payment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+          from { opacity: 0; transform: scale(0.95) translateY(20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
     </main>
   )
 }

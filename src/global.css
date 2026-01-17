@@ -189,3 +189,15 @@
 @media (max-width: 1024px) { 
   .profile-grid { grid-template-columns: 1fr; } 
 }
+
+.course-player-layout { 
+  display: grid; 
+  grid-template-columns: 1fr 380px; 
+  gap: 2rem; 
+}
+
+@media (max-width: 1024px) { 
+  .course-player-layout { 
+    grid-template-columns: 1fr; 
+  } 
+}

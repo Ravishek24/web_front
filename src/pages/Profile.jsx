@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import SubscriptionCard from '../components/SubscriptionCard'
+import ServiceForm from '../components/ServiceForm'
+import ProductForm from '../components/ProductForm'
 import { initiatePayUPayment } from '../services/payuService'
 
 export default function Profile() {
-  const [tab, setTab] = useState('activity') // activity | messages | listings
+  const [tab, setTab] = useState('messages') // messages | listings | orders | cart
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const [showPaymentForm, setShowPaymentForm] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState(null)
+  const [showListingTypeModal, setShowListingTypeModal] = useState(false)
+  const [showServiceForm, setShowServiceForm] = useState(false)
+  const [showProductForm, setShowProductForm] = useState(false)
   const [paymentFormData, setPaymentFormData] = useState({
     firstname: '',
     lastname: '',
@@ -292,35 +297,18 @@ export default function Profile() {
           </div>
 
           {/* Tabs */}
-          <div style={{ display:'flex', gap:8, marginTop:16, marginBottom:16 }}>
+          <div style={{ display:'flex', gap:8, marginTop:16, marginBottom:16, flexWrap:'wrap' }}>
             {[
-              { key:'activity', label:'Activity' },
               { key:'messages', label:'Messages' },
-              { key:'listings', label:'Listings' }
+              { key:'listings', label:'Listings' },
+              { key:'orders', label:'Orders' },
+              { key:'cart', label:'Cart' }
             ].map(t => (
               <button key={t.key} onClick={() => setTab(t.key)} style={pill(tab===t.key)}>{t.label}</button>
             ))}
           </div>
 
           {/* Tab content */}
-          {tab === 'activity' && (
-            <div style={{ display:'grid', gap:12 }}>
-              {[
-                { text:'Earned "Active Member" badge', when:'2 hours ago' },
-                { text:'Posted in "General Discussion"', when:'1 day ago' },
-                { text:'Joined the community', when:'3 days ago' },
-              ].map((a,i) => (
-                <div key={i} style={{ display:'flex', gap:12, alignItems:'center', background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:14, boxShadow:'0 2px 10px rgba(0,0,0,.03)' }}>
-                  <div style={{ width:36, height:36, borderRadius:18, background:'#dbeafe', display:'flex', alignItems:'center', justifyContent:'center', color:'#1d4ed8', fontWeight:800 }}>★</div>
-                  <div>
-                    <div style={{ fontWeight:600 }}>{a.text}</div>
-                    <div style={{ color:'#6b7280', fontSize:12 }}>{a.when}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
           {tab === 'messages' && (
             <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:16, color:'#6b7280' }}>
               Messages feature coming soon.
@@ -328,18 +316,148 @@ export default function Profile() {
           )}
 
           {tab === 'listings' && (
+            <div>
+              <button
+                onClick={() => setShowListingTypeModal(true)}
+                style={{
+                  width: '100%',
+                  marginBottom: 16,
+                  padding: '12px 24px',
+                  borderRadius: 12,
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #2D68C4, #FE6F5E)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 12px rgba(45, 104, 196, 0.3)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(45, 104, 196, 0.4)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(45, 104, 196, 0.3)'
+                }}
+              >
+                + Create Listing
+              </button>
+              <div style={{ display:'grid', gap:12 }}>
+                {[1,2].map(i => (
+                  <div key={i} style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <div style={{ fontWeight:700 }}>Sample Listing {i}</div>
+                    <div style={{ display:'flex', gap:8 }}>
+                      <button style={{ background:'#f3f4f6', borderRadius:8, padding:'8px 10px' }}>Edit</button>
+                      <button style={{ background:'#3b82f6', color:'#fff', borderRadius:8, padding:'8px 10px' }}>View</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tab === 'orders' && (
             <div style={{ display:'grid', gap:12 }}>
-              {[1,2].map(i => (
-                <div key={i} style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                  <div style={{ fontWeight:700 }}>Sample Listing {i}</div>
-                  <div style={{ display:'flex', gap:8 }}>
-                    <button style={{ background:'#f3f4f6', borderRadius:8, padding:'8px 10px' }}>Edit</button>
-                    <button style={{ background:'#3b82f6', color:'#fff', borderRadius:8, padding:'8px 10px' }}>View</button>
+              {[
+                { id: 1, orderId: 'ORD-2024-001', item: 'Introduction to Digital Marketing Course', amount: '₹2,500', status: 'Completed', date: 'Jan 10, 2024' },
+                { id: 2, orderId: 'ORD-2024-002', item: 'Yoga for Beginners Course', amount: '₹1,800', status: 'In Progress', date: 'Jan 12, 2024' },
+                { id: 3, orderId: 'ORD-2024-003', item: 'Business Strategy & Growth Course', amount: '₹4,500', status: 'Pending', date: 'Jan 15, 2024' }
+              ].map(order => (
+                <div key={order.id} style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:16, boxShadow:'0 2px 10px rgba(0,0,0,.03)' }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'start', marginBottom:12 }}>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontWeight:700, fontSize:16, marginBottom:4 }}>{order.item}</div>
+                      <div style={{ color:'#6b7280', fontSize:12, marginBottom:4 }}>Order ID: {order.orderId}</div>
+                      <div style={{ color:'#6b7280', fontSize:12 }}>Date: {order.date}</div>
+                    </div>
+                    <div style={{ textAlign:'right' }}>
+                      <div style={{ fontWeight:800, fontSize:18, color:'#2D68C4', marginBottom:4 }}>{order.amount}</div>
+                      <div style={{
+                        padding: '4px 10px',
+                        borderRadius: 8,
+                        fontSize: 11,
+                        fontWeight: 700,
+                        display: 'inline-block',
+                        background: order.status === 'Completed' ? '#d1fae5' : order.status === 'In Progress' ? '#dbeafe' : '#fef3c7',
+                        color: order.status === 'Completed' ? '#065f46' : order.status === 'In Progress' ? '#1e40af' : '#92400e'
+                      }}>
+                        {order.status}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:8, marginTop:12 }}>
+                    <button style={{ background:'#f3f4f6', borderRadius:8, padding:'8px 12px', fontWeight:600, fontSize:13 }}>View Details</button>
+                    {order.status === 'Completed' && (
+                      <button style={{ background:'#3b82f6', color:'#fff', borderRadius:8, padding:'8px 12px', fontWeight:600, fontSize:13 }}>Download</button>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           )}
+
+          {tab === 'cart' && (() => {
+            const cartItems = [
+              { id: 1, item: 'Creative Writing Workshop', price: '₹2,000', instructor: 'Kavita Das' },
+              { id: 2, item: 'Financial Planning for Entrepreneurs', price: '₹3,500', instructor: 'Meera Patel' }
+            ]
+            const total = cartItems.reduce((sum, item) => sum + parseInt(item.price.replace('₹', '').replace(',', '')), 0)
+            
+            return cartItems.length === 0 ? (
+              <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:40, textAlign:'center', color:'#6b7280' }}>
+                <div style={{ fontSize:48, marginBottom:16 }}>🛒</div>
+                <div style={{ fontWeight:600, fontSize:18, marginBottom:8 }}>Your cart is empty</div>
+                <div style={{ fontSize:14 }}>Add courses to your cart to get started</div>
+              </div>
+            ) : (
+              <div>
+                <div style={{ display:'grid', gap:12, marginBottom:16 }}>
+                  {cartItems.map(cartItem => (
+                    <div key={cartItem.id} style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:16, display:'flex', justifyContent:'space-between', alignItems:'center', boxShadow:'0 2px 10px rgba(0,0,0,.03)' }}>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontWeight:700, fontSize:16, marginBottom:4 }}>{cartItem.item}</div>
+                        <div style={{ color:'#6b7280', fontSize:13 }}>by {cartItem.instructor}</div>
+                        <div style={{ fontWeight:800, fontSize:18, color:'#2D68C4', marginTop:8 }}>{cartItem.price}</div>
+                      </div>
+                      <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+                        <button style={{ background:'#fee2e2', color:'#dc2626', borderRadius:8, padding:'8px 12px', fontWeight:600, fontSize:13 }}>Remove</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:12, padding:20 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+                    <div style={{ fontWeight:700, fontSize:18 }}>Total</div>
+                    <div style={{ fontWeight:800, fontSize:24, color:'#2D68C4' }}>₹{total.toLocaleString('en-IN')}</div>
+                  </div>
+                  <button style={{ 
+                    width:'100%',
+                    background:'linear-gradient(135deg, #2D68C4, #FE6F5E)', 
+                    color:'#fff', 
+                    borderRadius:12, 
+                    padding:'12px 24px', 
+                    fontWeight:700, 
+                    fontSize:16,
+                    border:'none',
+                    cursor:'pointer',
+                    transition:'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(45, 104, 196, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}>
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </div>
+            )
+          })()}
         </section>
       </div>
 
@@ -351,7 +469,7 @@ export default function Profile() {
             inset: 0,
             background: 'rgba(0, 0, 0, 0.85)',
             backdropFilter: 'blur(4px)',
-            zIndex: 1000,
+            zIndex: 2000,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -495,7 +613,7 @@ export default function Profile() {
             inset: 0,
             background: 'rgba(0, 0, 0, 0.85)',
             backdropFilter: 'blur(4px)',
-            zIndex: 1001,
+            zIndex: 2001,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -764,6 +882,134 @@ export default function Profile() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Listing Type Selection Modal */}
+      {showListingTypeModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center px-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 2000
+          }}
+          onClick={() => setShowListingTypeModal(false)}
+        >
+          <div
+            className="w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden glass-card">
+              <div
+                className="px-6 py-4 flex items-center justify-between"
+                style={{
+                  background: 'linear-gradient(135deg, #2D68C4, #FE6F5E)',
+                  color: 'white'
+                }}
+              >
+                <h2 className="text-xl font-bold">Create New Listing</h2>
+                <button
+                  type="button"
+                  onClick={() => setShowListingTypeModal(false)}
+                  className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-lg font-bold transition-all duration-200"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="p-6">
+                <p className="text-sm text-gray-600 mb-6 text-center">
+                  What would you like to list?
+                </p>
+                <div className="grid grid-cols-1 gap-4">
+                  <button
+                    onClick={() => {
+                      setShowListingTypeModal(false)
+                      setShowServiceForm(true)
+                    }}
+                    className="p-6 rounded-2xl border-2 border-gray-200 hover:border-blue-500 transition-all duration-200 text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(45, 104, 196, 0.05), rgba(254, 111, 94, 0.05))'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)'
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(45, 104, 196, 0.2)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  >
+                    <div className="text-4xl mb-3">🎓</div>
+                    <div className="font-bold text-lg text-gray-900 mb-1">Service</div>
+                    <div className="text-sm text-gray-600">Offer your skills and expertise</div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowListingTypeModal(false)
+                      setShowProductForm(true)
+                    }}
+                    className="p-6 rounded-2xl border-2 border-gray-200 hover:border-green-500 transition-all duration-200 text-left"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(147, 181, 83, 0.05), rgba(118, 239, 227, 0.05))'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)'
+                      e.currentTarget.style.boxShadow = '0 8px 24px rgba(147, 181, 83, 0.2)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  >
+                    <div className="text-4xl mb-3">🛍️</div>
+                    <div className="font-bold text-lg text-gray-900 mb-1">Product</div>
+                    <div className="text-sm text-gray-600">Sell physical or digital products</div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Service Form Modal */}
+      {showServiceForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center px-2 sm:px-4 py-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 2000
+          }}
+          onClick={() => setShowServiceForm(false)}
+        >
+          <div
+            className="w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ServiceForm onClose={() => setShowServiceForm(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Product Form Modal */}
+      {showProductForm && (
+        <div
+          className="fixed inset-0 flex items-center justify-center px-2 sm:px-4 py-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 2000
+          }}
+          onClick={() => setShowProductForm(false)}
+        >
+          <div
+            className="w-full max-w-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ProductForm onClose={() => setShowProductForm(false)} />
           </div>
         </div>
       )}

@@ -12,7 +12,7 @@ export default function App() {
   return (
     <div style={{ fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif', minHeight: '100vh', background: '#f8fafc', overflowX: 'hidden', width: '100%' }}>
       <header style={{
-        background: 'linear-gradient(90deg,#fef3c7,#fde68a)',
+        background: '#ffa500',
         padding: '8px 0',
         boxShadow: '0 8px 24px rgba(0,0,0,.06)',
         borderBottom: '1px solid rgba(0,0,0,.05)',
@@ -25,7 +25,25 @@ export default function App() {
       }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', maxWidth:1200, margin:'0 auto', padding: '0 8px' }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 450, color: '#111827', fontFamily: "'BBH Bogle', sans-serif" }}>{isMarketplace ? 'Marketplace' : 'MAADHURAYAM'}</h1>
+            <Link to="/" style={{ textDecoration: 'none' }}>
+              <h1 style={{ 
+                margin: 0, 
+                fontSize: 30, 
+                fontWeight: 450, 
+                color: '#111827', 
+                fontFamily: "'BBH Bogle', sans-serif",
+                cursor: 'pointer',
+                transition: 'opacity 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1'
+              }}>
+                {isMarketplace ? 'Marketplace' : 'MAADHURAYAM'}
+              </h1>
+            </Link>
           </div>
           <nav style={{ display:'flex', gap: 8 }}>
             <button onClick={() => setNotifOpen(true)} className="btn" style={{ background: 'rgba(255,255,255,.8)', color:'#111827', border: '1px solid rgba(0,0,0,.06)', borderRadius: 12, padding: '10px 14px', fontWeight: 700, boxShadow:'0 2px 8px rgba(0,0,0,.05)', backdropFilter: 'blur(4px)' }}>Notifications</button>

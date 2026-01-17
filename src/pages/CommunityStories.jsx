@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Quote } from 'lucide-react'
+import JoinFamilyForm from '../components/JoinFamilyForm'
 
 export default function CommunityStories() {
+  const [showJoinForm, setShowJoinForm] = useState(false)
   const stories = [
     {
       id: 1,
@@ -245,8 +247,9 @@ export default function CommunityStories() {
           Join our community of inspiring women and start your journey towards growth and success.
         </p>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <button style={{
+          <button 
+            onClick={() => setShowJoinForm(true)}
+            style={{
               background: 'linear-gradient(135deg, #2D68C4, #FE6F5E)',
               color: 'white',
               padding: '0.875rem 2rem',
@@ -266,10 +269,9 @@ export default function CommunityStories() {
               e.currentTarget.style.transform = 'translateY(0)'
               e.currentTarget.style.boxShadow = '0 4px 15px rgba(45, 104, 196, 0.4)'
             }}>
-              Join Our Community
-            </button>
-          </Link>
-          <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+            Join Our Community
+          </button>
+          <Link to="/community" style={{ textDecoration: 'none' }}>
             <button style={{
               background: 'white',
               color: '#2D68C4',
@@ -289,11 +291,30 @@ export default function CommunityStories() {
               e.currentTarget.style.background = 'white'
               e.currentTarget.style.transform = 'translateY(0)'
             }}>
-              Explore Marketplace
+              Explore Community
             </button>
           </Link>
         </div>
       </div>
+
+      {/* Join Family Modal */}
+      {showJoinForm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={() => setShowJoinForm(false)}
+        >
+          <div
+            className="w-full max-w-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <JoinFamilyForm onClose={() => setShowJoinForm(false)} />
+          </div>
+        </div>
+      )}
     </main>
   )
 }

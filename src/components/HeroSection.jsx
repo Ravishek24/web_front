@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 import { MoveRight, Users, TrendingUp, Package, User } from 'lucide-react'
 import AnimatedGradientBackground from './AnimatedGradientBackground'
 
-export default function HeroSection() {
+export default function HeroSection({ onJoinClick }) {
   const heroRef = useRef(null)
   const [hoveredNode, setHoveredNode] = useState(null)
 
@@ -100,7 +100,9 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="hero-cta flex flex-wrap gap-4 mb-12">
-            <button className="btn-primary flex items-center gap-2 bg-white text-blue-600 shadow-2xl"
+            <button
+              className="btn-primary flex items-center gap-2 bg-white text-blue-600 shadow-2xl"
+              onClick={onJoinClick}
                     style={{ fontSize: '1.1rem' }}>
               Join our family
               <MoveRight size={20} />

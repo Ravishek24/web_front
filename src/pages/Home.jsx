@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import HeroSection from '../components/HeroSection'
+import JoinFamilyForm from '../components/JoinFamilyForm'
+import SignInForm from '../components/SignInForm'
 import StatsBento from '../components/StatsBento'
 import EnhancedCategoryCarousel from '../components/EnhancedCategoryCarousel'
 import TrendingCards from '../components/TrendingCards'
@@ -7,11 +9,13 @@ import ActivityFeed from '../components/ActivityFeed'
 
 export default function Home() {
   const [showFacebookModal, setShowFacebookModal] = useState(false)
+  const [showJoinForm, setShowJoinForm] = useState(false)
+  const [showSignInForm, setShowSignInForm] = useState(false)
 
   return (
     <>
       {/* Hero Section - Full Page */}
-      <HeroSection />
+      <HeroSection onJoinClick={() => setShowJoinForm(true)} />
 
       <div className="min-h-screen" style={{ background: '#f8fafc' }}>
         <div className="container py-10">
@@ -225,6 +229,56 @@ export default function Home() {
                 allow="encrypted-media"
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Join Family Modal */}
+      {showJoinForm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={() => setShowJoinForm(false)}
+        >
+          <div
+            className="w-full max-w-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <JoinFamilyForm 
+              onClose={() => setShowJoinForm(false)} 
+              onSwitchToSignIn={() => {
+                setShowJoinForm(false)
+                setShowSignInForm(true)
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Sign In Modal */}
+      {showSignInForm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-2 sm:px-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={() => setShowSignInForm(false)}
+        >
+          <div
+            className="w-full max-w-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SignInForm 
+              onClose={() => setShowSignInForm(false)}
+              onSwitchToJoin={() => {
+                setShowSignInForm(false)
+                setShowJoinForm(true)
+              }}
+            />
           </div>
         </div>
       )}

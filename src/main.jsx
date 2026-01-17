@@ -6,6 +6,12 @@ import Home from './pages/Home.jsx'
 import Marketplace from './pages/Marketplace.jsx'
 import Feed from './pages/Feed.jsx'
 import Profile from './pages/Profile.jsx'
+import CommunityStories from './pages/CommunityStories.jsx'
+import Community from './pages/Community.jsx'
+import CoursePlayer from './pages/CoursePlayer.jsx'
+import CourseIntro from './pages/CourseIntro.jsx'
+import PaymentSuccess from './pages/PaymentSuccess.jsx'
+import PaymentFailure from './pages/PaymentFailure.jsx'
 import './global.css'
 
 const router = createBrowserRouter([
@@ -16,7 +22,18 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'marketplace', element: <Marketplace /> },
       { path: 'feed', element: <Feed /> },
-      { path: 'profile', element: <Profile /> }
+      { path: 'profile', element: <Profile /> },
+      { path: 'community-stories', element: <CommunityStories /> },
+      { path: 'community', element: <Community /> },
+      { path: 'course/:courseId', element: <CoursePlayer /> },
+      { path: 'course-intro/:courseId', element: <CourseIntro /> }
+    ]
+  },
+  {
+    path: '/payment',
+    children: [
+      { path: 'success', element: <PaymentSuccess /> },
+      { path: 'failure', element: <PaymentFailure /> }
     ]
   }
 ])

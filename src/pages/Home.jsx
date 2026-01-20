@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import HeroSection from '../components/HeroSection'
 import JoinFamilyForm from '../components/JoinFamilyForm'
 import SignInForm from '../components/SignInForm'
@@ -114,13 +115,13 @@ export default function Home() {
                     </p>
                     
                     <div className="flex gap-2">
-                      <a href="/community-stories" className="flex-1">
+                      <Link to="/community-stories" className="flex-1" style={{ textDecoration: 'none' }}>
                         <button className="w-full py-2.5 rounded-xl font-bold text-white transition-all duration-300
                                          hover:-translate-y-1 hover:shadow-lg text-sm"
                                 style={{ background: 'linear-gradient(135deg, #2D68C4, #FE6F5E)' }}>
                           Explore
                         </button>
-                      </a>
+                      </Link>
                       <button className="flex-1 py-2.5 rounded-xl font-bold border-2 transition-all duration-300
                                        hover:-translate-y-1 text-sm"
                               style={{ borderColor: '#2D68C4', color: '#2D68C4' }}>
